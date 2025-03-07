@@ -22,7 +22,7 @@ const InvoiceModal = ({
   const SaveAsPDFHandler = () => {
     const dom = document.getElementById("print");
 
-    toPng(dom, { cacheBust: false, quality: 1, pixelRatio: 3 }) // ✅ 3x High Quality Image Capture
+    toPng(dom, { cacheBust: false, quality: 1, pixelRatio: 3 })
       .then((dataUrl) => {
         const img = new Image();
         img.crossOrigin = "anonymous";
@@ -36,9 +36,7 @@ const InvoiceModal = ({
           });
 
           const pdfWidth = pdf.internal.pageSize.getWidth();
-          // const pdfHeight = pdf.internal.pageSize.getHeight();
 
-          // ✅ Maintain Aspect Ratio for High Quality
           const imgProps = pdf.getImageProperties(img);
           const imgWidth = pdfWidth;
           const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
@@ -100,7 +98,7 @@ const InvoiceModal = ({
                   </h1>
 
                   <h1
-                    className="text-lg text-[10px] font-bold text-white"
+                    className="text-[10px] text-lg font-bold text-white"
                     style={{
                       backgroundColor: "#fe5000",
                       borderRadius: "5px",
@@ -113,7 +111,7 @@ const InvoiceModal = ({
 
                 {/* Invoice Details Section */}
                 <div className="mt-6">
-                  <div className="mb-4 grid grid-cols-2">
+                  <div className="mb-9 grid grid-cols-2">
                     <span className="text-[10px] font-semibold">
                       Invoice To
                     </span>
@@ -152,67 +150,88 @@ const InvoiceModal = ({
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {items.map((item) => (
-                        <tr
-                          key={item.id}
-                          className=" border-l border-black text-center text-[10px]"
-                        >
-                          <td className="border-l border-black px-2">
-                            {item.name}
-                          </td>
-                          <td className="border-l border-black px-2 text-center">
-                            ₹{Number(item.received).toFixed(2)}
-                          </td>
-                          <td className="border-l border-black px-2 text-center">
-                            ₹{Number(item.pending).toFixed(2)}
-                          </td>
-                          <td className="border-l border-black px-2 text-center">
-                            ₹
-                            {(
-                              Number(item.received) + Number(item.pending)
-                            ).toFixed(2)}
-                          </td>
-                        </tr>
-                      ))}
 
-                      {/* Grand Total Row */}
-                      <tr className="border-t-1 border-black text-center text-[11px]">
-                        <td className="border border-black px-2 py-1 ">
-                          Grand Total:
-                        </td>
-                        <td className="border border-black px-2 py-1 text-center font-bold">
-                          ₹
-                          {items
-                            .reduce(
-                              (sum, item) => sum + Number(item.received),
-                              0
-                            )
-                            .toFixed(2)}
-                        </td>
-                        <td className="border border-black px-2 py-1 text-center font-bold">
-                          ₹
-                          {items
-                            .reduce(
-                              (sum, item) => sum + Number(item.pending),
-                              0
-                            )
-                            .toFixed(2)}
-                        </td>
-                        <td className="border border-black px-2 py-1 text-center font-bold">
-                          ₹
-                          {items
-                            .reduce(
-                              (sum, item) =>
-                                sum +
-                                Number(item.received) +
-                                Number(item.pending),
-                              0
-                            )
-                            .toFixed(2)}
-                        </td>
-                      </tr>
-                    </tbody>
+
+
+                    <tbody
+  className="relative"
+  style={{
+    backgroundImage: "url('https://koshank-testing.netlify.app/static/media/logo.037913fc4166560a2c71.png')",
+    backgroundSize: "100%",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    position: "relative",
+  }}
+>
+  {/* Overlay for Opacity Effect */}
+  <tr className="absolute inset-0 bg-white opacity-90"></tr>
+
+  {items.map((item) => (
+    <tr
+      key={item.id}
+      className="relative border-l border-black text-center text-[10px]"
+    >
+      <td className="h-[40px] border-l border-black px-2 align-middle">
+        {item.name}
+      </td>
+      <td className="h-[40px] border-l border-black px-2 text-center align-middle">
+        ₹{Number(item.received).toFixed(2)}
+      </td>
+      <td className="h-[40px] border-l border-black px-2 text-center align-middle">
+        ₹{Number(item.pending).toFixed(2)}
+      </td>
+      <td className="h-[40px] border-l border-black px-2 text-center align-middle">
+        ₹
+        {(
+          Number(item.received) + Number(item.pending)
+        ).toFixed(2)}
+      </td>
+    </tr>
+  ))}
+
+  {/* Grand Total Row */}
+  <tr className="border-t-1 relative h-[40px] border-black text-center text-[11px]">
+    <td className="h-[40px] border border-black px-2 py-1 align-middle">
+      Grand Total:
+    </td>
+    <td className="h-[40px] border border-black px-2 py-1 text-center align-middle font-bold">
+      ₹
+      {items
+        .reduce(
+          (sum, item) => sum + Number(item.received),
+          0
+        )
+        .toFixed(2)}
+    </td>
+    <td className="h-[40px] border border-black px-2 py-1 text-center align-middle font-bold">
+      ₹
+      {items
+        .reduce(
+          (sum, item) => sum + Number(item.pending),
+          0
+        )
+        .toFixed(2)}
+    </td>
+    <td className="h-[40px] border border-black px-2 py-1 text-center align-middle font-bold">
+      ₹
+      {items
+        .reduce(
+          (sum, item) =>
+            sum +
+            Number(item.received) +
+            Number(item.pending),
+          0
+        )
+        .toFixed(2)}
+    </td>
+  </tr>
+</tbody>
+
+
+
+
+
+                    
                   </table>
                   <tr className="mt-9 text-center">
                     <td colSpan="4" className="pt-2 text-center font-bold">
