@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { uid } from "uid";
 import InvoiceItem from "./InvoiceItem";
-import InvoiceModal from "./InvoiceModal";  // Added back modal import
+import InvoiceModal from "./InvoiceModal"; 
 
 const date = new Date();
 const today = date.toLocaleDateString("en-GB", {
@@ -69,7 +69,6 @@ const InvoiceForm = () => {
     (sum, item) => sum + (Number(item.advance) || 0),
     0
   );
-  const finalTotal = totalCost - totalAdvance;
 
   return (
     <form
@@ -168,19 +167,15 @@ const InvoiceForm = () => {
         {/* Total Calculation Section */}
         <div className="mt-4 flex justify-between border-t pt-2">
           <span className="font-bold">Total QNTY:</span>
-          <span className="font-bold">{totalQuantity}</span>
+          <span className="font-bold">{totalCost}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-bold">Total Cost:</span>
-          <span className="font-bold">₹{totalCost}</span>
+          <span className="font-bold">₹{totalQuantity}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-bold">Total Advance:</span>
           <span className="font-bold">₹{totalAdvance}</span>
-        </div>
-        <div className="mt-4 flex justify-between border-t pt-2">
-          <span className="font-bold">Final Total:</span>
-          <span className="font-bold">₹{finalTotal}</span>
         </div>
       </div>
 
@@ -201,10 +196,6 @@ const InvoiceForm = () => {
               today,
               cashierName,
               customerName,
-              totalQuantity,
-              totalCost,
-              totalAdvance,
-              finalTotal,
             }}
             items={items}
           />
