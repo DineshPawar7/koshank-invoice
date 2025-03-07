@@ -1,18 +1,19 @@
 import React from 'react';
 import InvoiceField from './InvoiceField';
 
-const InvoiceItem = ({ id, name, pending, received, onDeleteItem, onEditItem }) => {
+const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditItem }) => {
   const deleteItemHandler = () => {
     onDeleteItem(id);
   };
 
   return (
     <tr>
-      <td className="w-full">
+      {/* Item Name */}
+      <td className="max-w-[100px]">
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            placeholder: 'Item name',
+            placeholder: 'Product Name',
             type: 'text',
             name: 'name',
             id: id,
@@ -20,33 +21,51 @@ const InvoiceItem = ({ id, name, pending, received, onDeleteItem, onEditItem }) 
           }}
         />
       </td>
-      <td className="min-w-[65px] md:min-w-[80px]">
+
+      {/* Cost */}
+      <td className="max-w-[20px]">
+        <InvoiceField
+          onEditItem={(event) => onEditItem(event)}
+          cellData={{
+            placeholder: 'cost',
+            type: 'number',
+            name: 'cost',
+            id: id,
+            value: cost,
+          }}
+        />
+      </td>
+
+      {/* Quantity */}
+      <td className="max-w-[20px] md:max-w-[20px]">
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
             type: 'number',
+            placeholder: 'qty',
             min: '1',
-            name: 'pending',
+            name: 'quantity',
             id: id,
-            value: pending,
+            value: quantity,
           }}
         />
       </td>
-      <td className="relative min-w-[100px] md:min-w-[150px]">
-        
+
+      {/* Advance */}
+      <td className="max-w-[20px]">
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            className: 'text-right',
+            placeholder: 'advance',
             type: 'number',
-            min: '0.01',
-            step: '0.01',
-            name: 'received',
+            name: 'advance',
             id: id,
-            value: received,
+            value: advance,
           }}
         />
       </td>
+
+      {/* Delete Button */}
       <td className="flex items-center justify-center">
         <button
           className="rounded-md bg-red-500 p-2 text-white shadow-sm transition-colors duration-200 hover:bg-red-600"

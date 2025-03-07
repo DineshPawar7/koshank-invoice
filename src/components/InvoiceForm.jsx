@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { uid } from "uid";
 import InvoiceItem from "./InvoiceItem";
-import InvoiceModal from "./InvoiceModal";
-import incrementString from "../helpers/incrementString";
+import InvoiceModal from "./InvoiceModal";  // Added back modal import
 
 const date = new Date();
 const today = date.toLocaleDateString("en-GB", {
@@ -20,8 +19,9 @@ const InvoiceForm = () => {
     {
       id: uid(6),
       name: "",
-      pending: "0",
-      received: "0",
+      quantity: "0",
+      cost: "0",
+      advance: "0",
     },
   ]);
 
@@ -30,26 +30,15 @@ const InvoiceForm = () => {
     setIsOpen(true);
   };
 
-  const addNextInvoiceHandler = () => {
-    setInvoiceNumber((prevNumber) => incrementString(prevNumber));
-    setItems([
-      {
-        id: uid(6),
-        name: "",
-        pending: "0",
-        received: "0",
-      },
-    ]);
-  };
-
   const addItemHandler = () => {
     setItems((prevItems) => [
       ...prevItems,
       {
         id: uid(6),
         name: "",
-        pending: "0",
-        received: "0",
+        quantity: "0",
+        cost: "0",
+        advance: "0",
       },
     ]);
   };
@@ -60,21 +49,27 @@ const InvoiceForm = () => {
 
   const editItemHandler = (event) => {
     const { id, name, value } = event.target;
-    const newItems = items.map((item) =>
-      item.id === id ? { ...item, [name]: value } : item
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, [name]: value } : item
+      )
     );
-    setItems(newItems);
   };
 
-  const totalPending = items.reduce(
-    (sum, item) => sum + Number(item.pending),
+  // Calculate totals
+  const totalQuantity = items.reduce(
+    (sum, item) => sum + (Number(item.quantity) || 0),
     0
   );
-  const totalReceived = items.reduce(
-    (sum, item) => sum + Number(item.received),
+  const totalCost = items.reduce(
+    (sum, item) => sum + (Number(item.cost) || 0),
     0
   );
-  const total = totalPending + totalReceived;
+  const totalAdvance = items.reduce(
+    (sum, item) => sum + (Number(item.advance) || 0),
+    0
+  );
+  const finalTotal = totalCost - totalAdvance;
 
   return (
     <form
@@ -104,7 +99,9 @@ const InvoiceForm = () => {
             />
           </div>
         </div>
+
         <h1 className="text-center text-lg font-bold">INVOICE</h1>
+
         <div className="grid grid-cols-2 gap-2 pt-4 pb-8">
           <label htmlFor="cashierName" className="text-sm font-bold">
             Client:
@@ -133,12 +130,14 @@ const InvoiceForm = () => {
             onChange={(event) => setCustomerName(event.target.value)}
           />
         </div>
+
         <table className="w-full p-4 text-left">
           <thead>
             <tr className="border-b text-sm">
               <th>ITEM</th>
-              <th className="text-center">PENDING</th>
-              <th className="text-center">RECEIVED</th>
+              <th className="text-center">QTY</th>
+              <th className="text-center">COST</th>
+              <th className="text-center">ADVANCE</th>
               <th className="text-center">ACTION</th>
             </tr>
           </thead>
@@ -148,14 +147,16 @@ const InvoiceForm = () => {
                 key={item.id}
                 id={item.id}
                 name={item.name}
-                pending={item.pending}
-                received={item.received}
+                quantity={item.quantity}
+                cost={item.cost}
+                advance={item.advance}
                 onDeleteItem={deleteItemHandler}
                 onEditItem={editItemHandler}
               />
             ))}
           </tbody>
         </table>
+
         <button
           className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
           type="button"
@@ -163,19 +164,27 @@ const InvoiceForm = () => {
         >
           Add Item
         </button>
+
+        {/* Total Calculation Section */}
         <div className="mt-4 flex justify-between border-t pt-2">
-          <span className="font-bold">Total Pending:</span>
-          <span className="font-bold">₹{totalPending}</span>
+          <span className="font-bold">Total QNTY:</span>
+          <span className="font-bold">{totalQuantity}</span>
         </div>
         <div className="flex justify-between">
-          <span className="font-bold">Total Received:</span>
-          <span className="font-bold">₹{totalReceived}</span>
+          <span className="font-bold">Total Cost:</span>
+          <span className="font-bold">₹{totalCost}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="font-bold">Total Advance:</span>
+          <span className="font-bold">₹{totalAdvance}</span>
         </div>
         <div className="mt-4 flex justify-between border-t pt-2">
-          <span className="font-bold">Total:</span>
-          <span className="font-bold">₹{total}</span>
+          <span className="font-bold">Final Total:</span>
+          <span className="font-bold">₹{finalTotal}</span>
         </div>
       </div>
+
+      {/* Review Invoice Button and Modal */}
       <div className="basis-1/4 bg-transparent">
         <div className="sticky top-0 space-y-4 pb-8 md:pl-4">
           <button
@@ -184,6 +193,7 @@ const InvoiceForm = () => {
           >
             Review Invoice
           </button>
+
           <InvoiceModal
             isOpen={isOpen}
             setIsOpen={setIsOpen}
@@ -191,12 +201,12 @@ const InvoiceForm = () => {
               today,
               cashierName,
               customerName,
-              totalPending,
-              totalReceived,
-              total,
+              totalQuantity,
+              totalCost,
+              totalAdvance,
+              finalTotal,
             }}
             items={items}
-            onAddNextInvoice={addNextInvoiceHandler}
           />
         </div>
       </div>
