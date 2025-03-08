@@ -6,14 +6,16 @@ import { jsPDF } from "jspdf";
 const InvoiceModal = ({
   isOpen,
   setIsOpen,
-  invoiceInfo = {},
+  invoiceInfo = {}, // Default empty object
   items = [],
   onAddNextInvoice,
 }) => {
+  // ✅ Close Modal Function
   const closeModal = () => {
     setIsOpen(false);
   };
 
+  // ✅ Add Next Invoice Handler
   const addNextInvoiceHandler = () => {
     if (typeof onAddNextInvoice === "function") {
       onAddNextInvoice();
@@ -23,6 +25,10 @@ const InvoiceModal = ({
     setIsOpen(false);
   };
 
+  // ✅ Ensure invoiceDate is always defined
+  const invoiceDate = invoiceInfo.invoiceDate || "N/A";
+
+  // ✅ Save PDF Function
   const SaveAsPDFHandler = () => {
     const dom = document.getElementById("print");
 
@@ -49,10 +55,9 @@ const InvoiceModal = ({
           const imgWidth = pdfWidth;
           const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-          
-
           pdf.addImage(img, "PNG", 0, 0, imgWidth, imgHeight);
-          pdf.save(`invoice-${invoiceInfo.today || "unknown"}.pdf`);
+          const formattedDate = invoiceDate.replace(/\//g, "-");
+          pdf.save(`invoice-${formattedDate}.pdf`);
         };
       })
       .catch((error) => {
@@ -135,8 +140,9 @@ const InvoiceModal = ({
     <div className="mb-4 grid grid-cols-2">
       <span className="font-semibold text-[10px]">Invoice To</span>
       <span className="text-right font-semibold text-[10px]">
-        Date: {invoiceInfo.today}
-      </span>
+  Date: {invoiceInfo.invoiceDate || "N/A"}
+</span>
+
       <span className="text-left text-[10px]">{invoiceInfo.cashierName}</span>
       <span className="text-right text-[10px] text-gray-600">
         koshank.com@koshank.com

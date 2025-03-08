@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { uid } from "uid";
 import InvoiceItem from "./InvoiceItem";
-import InvoiceModal from "./InvoiceModal"; 
+import InvoiceModal from "./InvoiceModal";
 
 const date = new Date();
 const today = date.toLocaleDateString("en-GB", {
@@ -15,6 +15,7 @@ const InvoiceForm = () => {
   const [invoiceNumber, setInvoiceNumber] = useState(1);
   const [cashierName, setCashierName] = useState("");
   const [customerAddress, setcustomerAddress] = useState("");
+  const [invoiceDate, setInvoiceDate] = useState("");
   const [items, setItems] = useState([
     {
       id: uid(6),
@@ -58,24 +59,22 @@ const InvoiceForm = () => {
 
   // Calculate totals
   // Ensure all values are converted to numbers
-const totalQuantity = items.reduce(
-  (sum, item) => sum + (Number(item.quantity) || 0),
-  0
-);
-const totalCost = items.reduce(
-  (sum, item) => sum + (Number(item.cost) * Number(item.quantity) || 0), 
-  0
-);
+  const totalQuantity = items.reduce(
+    (sum, item) => sum + (Number(item.quantity) || 0),
+    0
+  );
+  const totalCost = items.reduce(
+    (sum, item) => sum + (Number(item.cost) * Number(item.quantity) || 0),
+    0
+  );
 
-const totalAdvance = items.reduce(
-  (sum, item) => sum + (Number(item.advance) || 0),
-  0
-);
+  const totalAdvance = items.reduce(
+    (sum, item) => sum + (Number(item.advance) || 0),
+    0
+  );
 
-// Calculate remaining payment correctly
-const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
-
-
+  // Calculate remaining payment correctly
+  const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
 
   return (
     <form
@@ -86,8 +85,17 @@ const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
         <div className="flex justify-between border-b pb-4">
           <div className="flex space-x-2">
             <span className="font-bold">Date: </span>
-            <span>{today}</span>
+            <input
+              required
+              className="max-w-[130px]"
+              type="date"
+              name="invoiceDate"
+              id="invoiceDate"
+              value={invoiceDate}
+              onChange={(event) => setInvoiceDate(event.target.value)}
+            />
           </div>
+
           <div className="flex items-center space-x-2">
             <label className="font-bold" htmlFor="invoiceNumber">
               Invoice No:
@@ -108,7 +116,7 @@ const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
 
         <h1 className="text-center text-lg font-bold">INVOICE</h1>
 
-        <div className="grid grid-cols-2 gap-2 pt-4 pb-8">
+        <div className="grid grid-cols-2 gap-2 pb-8 pt-4">
           <label htmlFor="cashierName" className="text-sm font-bold">
             Client:
           </label>
@@ -200,6 +208,7 @@ const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             invoiceInfo={{
+              invoiceDate,
               today,
               cashierName,
               customerAddress,
