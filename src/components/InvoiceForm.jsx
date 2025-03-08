@@ -14,7 +14,7 @@ const InvoiceForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState(1);
   const [cashierName, setCashierName] = useState("");
-  const [customerName, setCustomerName] = useState("");
+  const [customerAddress, setcustomerAddress] = useState("");
   const [items, setItems] = useState([
     {
       id: uid(6),
@@ -57,18 +57,25 @@ const InvoiceForm = () => {
   };
 
   // Calculate totals
-  const totalQuantity = items.reduce(
-    (sum, item) => sum + (Number(item.quantity) || 0),
-    0
-  );
-  const totalCost = items.reduce(
-    (sum, item) => sum + (Number(item.cost) || 0),
-    0
-  );
-  const totalAdvance = items.reduce(
-    (sum, item) => sum + (Number(item.advance) || 0),
-    0
-  );
+  // Ensure all values are converted to numbers
+const totalQuantity = items.reduce(
+  (sum, item) => sum + (Number(item.quantity) || 0),
+  0
+);
+const totalCost = items.reduce(
+  (sum, item) => sum + (Number(item.cost) * Number(item.quantity) || 0), 
+  0
+);
+
+const totalAdvance = items.reduce(
+  (sum, item) => sum + (Number(item.advance) || 0),
+  0
+);
+
+// Calculate remaining payment correctly
+const remainingPayment = (totalCost || 0) - (totalAdvance || 0);
+
+
 
   return (
     <form
@@ -115,7 +122,7 @@ const InvoiceForm = () => {
             value={cashierName}
             onChange={(event) => setCashierName(event.target.value)}
           />
-          <label htmlFor="customerName" className="text-sm font-bold">
+          <label htmlFor="customerAddress" className="text-sm font-bold">
             Address:
           </label>
           <input
@@ -123,10 +130,10 @@ const InvoiceForm = () => {
             className="flex-1"
             placeholder="Address"
             type="text"
-            name="customerName"
-            id="customerName"
-            value={customerName}
-            onChange={(event) => setCustomerName(event.target.value)}
+            name="customerAddress"
+            id="customerAddress"
+            value={customerAddress}
+            onChange={(event) => setcustomerAddress(event.target.value)}
           />
         </div>
 
@@ -195,7 +202,8 @@ const InvoiceForm = () => {
             invoiceInfo={{
               today,
               cashierName,
-              customerName,
+              customerAddress,
+              remainingPayment,
             }}
             items={items}
           />
