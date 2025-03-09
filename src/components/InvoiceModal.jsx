@@ -153,7 +153,7 @@ const InvoiceModal = ({
                               Mr. Shankar Dhange
                             </span>
                             <span className="block text-[10px]">
-                              koshank.com@koshank.com
+                            koshank.com@gmail.com
                             </span>
                             <span className="block text-[10px]">
                               Deccan, Pune, Maharashtra 411004
