@@ -13,10 +13,12 @@ const today = date.toLocaleDateString("en-GB", {
   year: "numeric",
 });
 
+
+
 const InvoiceForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState(1);
-  const [invoices, setInvoices] = useState([]);
+  const [invoices, setInvoices] = useState([]); // To store fetched invoices
   const [cashierName, setCashierName] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [invoiceDate, setInvoiceDate] = useState("");
@@ -29,6 +31,7 @@ const InvoiceForm = () => {
     setIsOpen(true);
   };
 
+  // Fetch invoices from Firestore
   const fetchInvoices = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "invoices"));
@@ -36,42 +39,56 @@ const InvoiceForm = () => {
         id: doc.id,
         ...doc.data(),
       }));
-
-      console.log("✅ Invoices fetched:", invoicesData);
-      setInvoices(invoicesData);
+      setInvoices(invoicesData); // Set the invoices state
     } catch (error) {
-      console.error("❌ Error fetching invoices:", error);
+      console.error("Error fetching invoices: ", error);
     }
   };
 
-  const generateInvoiceHandler = async (e) => {
-    e.preventDefault();
+  // Generate invoice and store it in Firestore
+  const generateInvoiceHandler = async () => {
+    const totalCost = items.reduce(
+      (sum, item) => sum + (Number(item.cost) * Number(item.quantity) || 0),
+      0
+    );
+    const totalAdvance = items.reduce(
+      (sum, item) => sum + (Number(item.advance) || 0),
+      0
+    );
+    const remainingPayment = totalCost - totalAdvance;
 
-    console.log("Generating invoice...");
+    const newInvoice = {
+      invoiceNumber,
+      invoiceDate,
+      cashierName,
+      customerAddress,
+      items,
+      totalCost,
+      totalAdvance,
+      remainingPayment,
+      pinned: false,
+    };
 
     try {
-      const newInvoice = {
-        invoiceNumber,
-        invoiceDate,
-        cashierName,
-        customerAddress,
-        items,
-        totalCost,
-        totalAdvance,
-        remainingPayment,
-        pinned: false,
-        timestamp: new Date(),
-      };
-
       await addDoc(collection(db, "invoices"), newInvoice);
-      console.log("✅ Invoice added to Firestore");
+setInvoices((prevInvoices) => [...prevInvoices, newInvoice]); // Sidebar instantly update hoga
 
+
+      // Fetch invoices again after adding a new one
       fetchInvoices();
+
+      // Reset the form fields after generating the invoice
+      setInvoiceNumber(invoiceNumber + 1);
+      setCashierName("");
+      setCustomerAddress("");
+      setInvoiceDate("");
+      setItems([{ id: uid(6), name: "", quantity: "0", cost: "0", advance: "0" }]);
     } catch (error) {
-      console.error("❌ Error adding invoice:", error);
+      console.error("Error adding invoice: ", error);
     }
   };
 
+  // Load invoice data to edit (if editing existing invoice)
   const loadInvoiceToEdit = (invoice) => {
     setInvoiceNumber(invoice.invoiceNumber);
     setInvoiceDate(invoice.invoiceDate);
@@ -80,6 +97,7 @@ const InvoiceForm = () => {
     setItems(invoice.items);
   };
 
+  // Add new item in invoice
   const addItemHandler = () => {
     setItems((prevItems) => [
       ...prevItems,
@@ -95,13 +113,18 @@ const InvoiceForm = () => {
   // Edit item details
   const editItemHandler = (event) => {
     const { name, value } = event.target;
-    const id = event.target.dataset.id;
+    const id = event.target.dataset.id; // Ensure it's a string
     setItems((prevItems) =>
       prevItems.map((item) =>
         String(item.id) === String(id) ? { ...item, [name]: value } : item
       )
     );
   };
+  
+  
+
+ 
+  
 
   // Calculating totals for quantity, cost, advance, and remaining payment
   const totalQuantity = items.reduce(
@@ -118,6 +141,7 @@ const InvoiceForm = () => {
   );
   const remainingPayment = totalCost - totalAdvance;
 
+  // Fetch invoices on initial load
   useEffect(() => {
     fetchInvoices();
   }, []);
@@ -165,8 +189,7 @@ const InvoiceForm = () => {
                 min="1"
                 step="1"
                 value={invoiceNumber}
-                onChange={(event) =>
-                  setInvoiceNumber(Number(event.target.value))
+                onChange={(event) => setInvoiceNumber(Number(event.target.value))
                 }
               />
             </div>
@@ -239,13 +262,13 @@ const InvoiceForm = () => {
           </button>
 
           <div className="mt-4 flex justify-between border-t pt-2">
-            <span className="font-bold">Total QNTY:</span>
-            <span className="font-bold">{totalQuantity}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-bold">Total Cost:</span>
-            <span className="font-bold">₹{totalCost}</span>
-          </div>
+  <span className="font-bold">Total QNTY:</span>
+  <span className="font-bold">{totalQuantity}</span>
+</div>
+<div className="flex justify-between">
+  <span className="font-bold">Total Cost:</span>
+  <span className="font-bold">₹{totalCost}</span>
+</div>
 
           <div className="flex justify-between">
             <span className="font-bold">Total Advance:</span>
@@ -261,6 +284,7 @@ const InvoiceForm = () => {
           </button>
         </div>
 
+        {/* Review Invoice Button and Modal */}
         <div className="basis-1/4 bg-transparent">
           <div className="sticky top-0 space-y-4 pb-8 md:pl-4">
             <InvoiceModal

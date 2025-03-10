@@ -1,25 +1,22 @@
-// import { useState } from "react";
+ import { useState } from "react";
 import InvoiceForm from "./components/InvoiceForm";
-// import PasswordScreen from "./components/PasswordScreen";
+ import PasswordScreen from "./components/PasswordScreen";
 
 function App() {
-  // const [isUnlocked, setIsUnlocked] = useState(false);
+   const [isUnlocked, setIsUnlocked] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-100">
 
-<div className="mx-auto max-w-7xl">
-          <InvoiceForm />
-        </div>
 
 
-      {/* {!isUnlocked ? (
+       {!isUnlocked ? (
         <PasswordScreen onUnlock={() => setIsUnlocked(true)} />
       ) : (
         <div className="mx-auto max-w-7xl">
           <InvoiceForm />
         </div>
-      )} */}
+      )} 
     </div>
   );
 }

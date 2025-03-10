@@ -4,7 +4,6 @@ const incrementString = (string) => {
   // Extract string's number
   let number = str.match(/\d+/) === null ? 0 : str.match(/\d+/)[0];
 
-  // Store number's length
   const numberLength = number.length;
 
   number = (parseInt(number) + 1).toString();

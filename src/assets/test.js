@@ -5,8 +5,9 @@ import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firesto
 
 const Sidebar = ({ setInvoices, onEdit }) => {
   const [showSidebar, setShowSidebar] = useState(false);
-  const [invoices, setLocalInvoices] = useState([]);
+  const [invoices, setLocalInvoices] = useState([]); // Local state to store invoices
 
+  // 🔹 Fetch Invoices from Firebase
   const fetchInvoices = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "invoices"));
@@ -14,45 +15,39 @@ const Sidebar = ({ setInvoices, onEdit }) => {
         id: doc.id,
         ...doc.data(),
       }));
-      setLocalInvoices(invoicesData);
-      setInvoices(invoicesData);
+      setLocalInvoices(invoicesData); // Local update
+      setInvoices(invoicesData); // Parent update
     } catch (error) {
       console.error("Error fetching invoices: ", error);
     }
   };
 
+  // 🔹 Delete Invoice from Firebase
   const deleteInvoice = async (id) => {
     try {
       await deleteDoc(doc(db, "invoices", id));
-      setLocalInvoices((prev) => prev.filter((invoice) => invoice.id !== id)); // UI update
-      setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
+      ; // UI update
     } catch (error) {
       console.error("Error deleting invoice: ", error);
     }
   };
 
+  // 🔹 Pin/Unpin Invoice in Firebase
   const pinInvoice = async (id, pinned) => {
     try {
       await updateDoc(doc(db, "invoices", id), { pinned: !pinned });
-      setLocalInvoices((prev) =>
-        prev.map((invoice) =>
-          invoice.id === id ? { ...invoice, pinned: !pinned } : invoice
-        )
-      );
-      setInvoices((prev) =>
-        prev.map((invoice) =>
-          invoice.id === id ? { ...invoice, pinned: !pinned } : invoice
-        )
-      );
+      fetchInvoices(); // UI update
     } catch (error) {
       console.error("Error updating pin status: ", error);
     }
   };
 
+  // 🔹 Fetch invoices when component mounts
   useEffect(() => {
     fetchInvoices();
   }, []);
 
+  // 🔹 Toggle Sidebar Visibility
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
   };

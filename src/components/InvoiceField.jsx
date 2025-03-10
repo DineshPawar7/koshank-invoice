@@ -1,19 +1,16 @@
-import React from 'react';
+import React from "react";
 
 const InvoiceField = ({ onEditItem, cellData }) => {
   return (
     <input
-      className={cellData.className}
       type={cellData.type}
-      placeholder={cellData.placeholder}
-      min={cellData.min}
-      max={cellData.max}
-      step={cellData.step}
       name={cellData.name}
-      id={cellData.id}
+      placeholder={cellData.placeholder}
+      min={cellData.min || undefined}
       value={cellData.value}
+      data-id={cellData.id}
       onChange={onEditItem}
-      
+      className="w-full border rounded px-2 py-1 text-center"
     />
   );
 };
