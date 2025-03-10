@@ -14,19 +14,20 @@ const Sidebar = ({ setInvoices, onEdit }) => {
         id: doc.id,
         ...doc.data(),
       }));
+      setLocalInvoices(invoicesData);
       setInvoices(invoicesData);
     } catch (error) {
       console.error("❌ Error fetching invoices:", error);
     }
-  }, []);
+  }, [setInvoices]);
 
   const deleteInvoice = async (id) => {
     try {
       await deleteDoc(doc(db, "invoices", id));
-      setLocalInvoices((prev) => prev.filter((invoice) => invoice.id !== id)); // UI update
+      setLocalInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
       setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
     } catch (error) {
-      console.error("Error deleting invoice: ", error);
+      console.error("❌ Error deleting invoice:", error);
     }
   };
 
@@ -44,13 +45,13 @@ const Sidebar = ({ setInvoices, onEdit }) => {
         )
       );
     } catch (error) {
-      console.error("Error updating pin status: ", error);
+      console.error("❌ Error updating pin status:", error);
     }
   };
 
   useEffect(() => {
     fetchInvoices();
-  }, [fetchInvoices]);
+  }, [fetchInvoices]); // ✅ Fixed dependency issue
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
