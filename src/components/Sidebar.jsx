@@ -34,7 +34,7 @@ const Sidebar = ({ invoices, setInvoices, onEdit }) => {
   useEffect(() => {
     const savedInvoices = JSON.parse(localStorage.getItem("invoices")) || [];
     setInvoices(savedInvoices);
-  }, []);
+  }, [setInvoices]);
 
   return (
     <>
