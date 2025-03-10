@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { MdDelete, MdEdit, MdPushPin, MdMenuBook, MdClose } from "react-icons/md";
 import { db } from "../firebase.js";
 import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
@@ -7,19 +7,18 @@ const Sidebar = ({ setInvoices, onEdit }) => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [invoices, setLocalInvoices] = useState([]);
 
-  const fetchInvoices = async () => {
+  const fetchInvoices = useCallback(async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "invoices"));
       const invoicesData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setLocalInvoices(invoicesData);
       setInvoices(invoicesData);
     } catch (error) {
-      console.error("Error fetching invoices: ", error);
+      console.error("❌ Error fetching invoices:", error);
     }
-  };
+  }, []);
 
   const deleteInvoice = async (id) => {
     try {
@@ -51,7 +50,7 @@ const Sidebar = ({ setInvoices, onEdit }) => {
 
   useEffect(() => {
     fetchInvoices();
-  }, []);
+  }, [fetchInvoices]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
