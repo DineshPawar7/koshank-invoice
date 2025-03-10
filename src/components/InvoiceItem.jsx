@@ -1,7 +1,15 @@
-import React from 'react';
-import InvoiceField from './InvoiceField';
+import React from "react";
+import InvoiceField from "./InvoiceField";
 
-const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditItem }) => {
+const InvoiceItem = ({
+  id,
+  name,
+  quantity,
+  cost,
+  advance,
+  onDeleteItem,
+  onEditItem,
+}) => {
   const deleteItemHandler = () => {
     onDeleteItem(id);
   };
@@ -13,9 +21,9 @@ const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditIt
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            placeholder: 'Product Name',
-            type: 'text',
-            name: 'name',
+            placeholder: "Product Name",
+            type: "text",
+            name: "name",
             id: id,
             value: name,
           }}
@@ -27,9 +35,9 @@ const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditIt
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            placeholder: 'cost',
-            type: 'number',
-            name: 'cost',
+            placeholder: "cost",
+            type: "number",
+            name: "cost",
             id: id,
             value: cost,
           }}
@@ -41,10 +49,10 @@ const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditIt
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            type: 'number',
-            placeholder: 'qty',
-            min: '1',
-            name: 'quantity',
+            type: "number",
+            placeholder: "qty",
+            min: "1",
+            name: "quantity",
             id: id,
             value: quantity,
           }}
@@ -56,9 +64,9 @@ const InvoiceItem = ({ id, name, quantity, cost, advance, onDeleteItem, onEditIt
         <InvoiceField
           onEditItem={(event) => onEditItem(event)}
           cellData={{
-            placeholder: 'advance',
-            type: 'number',
-            name: 'advance',
+            placeholder: "advance",
+            type: "number",
+            name: "advance",
             id: id,
             value: advance,
           }}
