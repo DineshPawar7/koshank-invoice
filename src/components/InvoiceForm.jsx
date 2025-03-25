@@ -45,10 +45,10 @@ const InvoiceForm = () => {
   };
 
   const generateInvoiceHandler = async (e) => {
-    e.preventDefault();
-
+    e.preventDefault(); // Prevent default form submission
+  
     console.log("Generating invoice...");
-
+  
     try {
       const newInvoice = {
         invoiceNumber,
@@ -62,15 +62,19 @@ const InvoiceForm = () => {
         pinned: false,
         timestamp: new Date(),
       };
-
+  
       await addDoc(collection(db, "invoices"), newInvoice);
       console.log("✅ Invoice added to Firestore");
-
-      fetchInvoices();
+  
+      await fetchInvoices();
+  
+      setIsOpen(true);
+  
     } catch (error) {
       console.error("❌ Error adding invoice:", error);
     }
   };
+  
 
   const loadInvoiceToEdit = (invoice) => {
     setInvoiceNumber(invoice.invoiceNumber);

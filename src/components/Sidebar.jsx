@@ -60,14 +60,15 @@ const Sidebar = ({ setInvoices, onEdit }) => {
   };
 
   const filteredInvoices = invoices
-    .filter((invoice) =>
-      invoice.cashierName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aMatches = a.cashierName.toLowerCase().startsWith(searchTerm.toLowerCase());
-      const bMatches = b.cashierName.toLowerCase().startsWith(searchTerm.toLowerCase());
-      return bMatches - aMatches;
-    });
+  .filter((invoice) =>
+    (invoice.cashierName || "").toLowerCase().includes((searchTerm || "").toLowerCase())
+  )
+  .sort((a, b) => {
+    const aMatches = (a.cashierName || "").toLowerCase().startsWith((searchTerm || "").toLowerCase());
+    const bMatches = (b.cashierName || "").toLowerCase().startsWith((searchTerm || "").toLowerCase());
+    return bMatches - aMatches;
+  });
+
 
   return (
     <>
