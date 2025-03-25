@@ -44,10 +44,9 @@ const InvoiceForm = () => {
     }
   };
 
-  const generateInvoiceHandler = async (e) => {
-    e.preventDefault(); // Prevent default form submission
   
-    console.log("Generating invoice...");
+  const generateInvoiceHandler = async (e) => {
+    e.preventDefault();
   
     try {
       const newInvoice = {
@@ -63,17 +62,19 @@ const InvoiceForm = () => {
         timestamp: new Date(),
       };
   
-      await addDoc(collection(db, "invoices"), newInvoice);
-      console.log("✅ Invoice added to Firestore");
+      const docRef = await addDoc(collection(db, "invoices"), newInvoice);
+      console.log("✅ Invoice added to Firestore with ID:", docRef.id);
   
-      await fetchInvoices();
+      // Fetch updated invoices & update Sidebar
+      fetchInvoices();
   
       setIsOpen(true);
-  
     } catch (error) {
       console.error("❌ Error adding invoice:", error);
     }
   };
+  
+  
   
 
   const loadInvoiceToEdit = (invoice) => {
@@ -130,11 +131,8 @@ const InvoiceForm = () => {
     <>
       <div>
         <h2 className="text-lg font-bold">Invoice History</h2>
-        <Sidebar
-          invoices={invoices}
-          setInvoices={setInvoices}
-          onEdit={loadInvoiceToEdit}
-        />
+        <Sidebar invoices={invoices} setInvoices={setInvoices} onEdit={loadInvoiceToEdit} />
+
       </div>
 
       <form

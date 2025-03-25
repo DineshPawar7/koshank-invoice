@@ -3,7 +3,8 @@ import { MdDelete, MdEdit, MdPushPin, MdMenuBook, MdClose, MdSearch } from "reac
 import { db } from "../firebase";
 import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 
-const Sidebar = ({ setInvoices, onEdit }) => {
+const Sidebar = ({ setInvoices, onEdit }) => { 
+
   const [showSidebar, setShowSidebar] = useState(false);
   const [invoices, setLocalInvoices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
