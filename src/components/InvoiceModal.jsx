@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
@@ -10,6 +10,8 @@ const InvoiceModal = ({
   items = [],
   onAddNextInvoice,
 }) => {
+  const [isHidden, setIsHidden] = useState(false); // State for hiding/showing the payment rows and AMOUNT column
+
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -61,19 +63,15 @@ const InvoiceModal = ({
       });
   };
 
-  // // Calculate totals
-  // const totalQuantity = items.reduce(
-  //   (sum, item) => sum + (Number(item.quantity) || 0),
-  //   0
-  // );
-  // const totalCost = items.reduce(
-  //   (sum, item) => sum + (Number(item.cost) || 0),
-  //   0
-  // );
+  // Calculate totals
   const totalAdvance = items.reduce(
     (sum, item) => sum + (Number(item.advance) || 0),
     0
   );
+
+  const toggleHide = () => {
+    setIsHidden((prevState) => !prevState); // Toggle the visibility state
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -114,13 +112,15 @@ const InvoiceModal = ({
             <div className="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
               <div className="relative p-4" id="print">
                 {/* Watermark Text (Center of Table) */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <h1 className="select-none text-4xl font-bold text-[#fe5000] opacity-5">
+                    &lt;Koshank /&gt;
+                  </h1>
+                </div>
 
                 {/* Header Section */}
                 <div className="mb-6 flex justify-between">
-                  <h1
-                    className="text-lg font-bold"
-                    style={{ color: "#fe5000" }}
-                  >
+                  <h1 className="text-lg font-bold" style={{ color: "#fe5000" }}>
                     &lt;Koshank /&gt;
                   </h1>
                   <h1 className="rounded-md bg-[#fe5000] px-2 text-[10px] text-lg font-bold text-white">
@@ -167,9 +167,7 @@ const InvoiceModal = ({
                   {/* Items Table */}
                   <table className="relative w-full border border-black text-center">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <h1 className="select-none text-6xl font-bold text-[#fe5000] opacity-5">
-                        &lt;Koshank /&gt;
-                      </h1>
+                      
                     </div>
                     <thead>
                       <tr className="border border-black bg-[#fe5000] text-[10px] text-white">
@@ -182,9 +180,11 @@ const InvoiceModal = ({
                         <th className="w-[50px] border border-black px-2 py-1">
                           QTY
                         </th>
-                        <th className="w-[100px] border border-black px-2 py-1">
-                          AMOUNT
-                        </th>
+                        {!isHidden && (
+                          <th className="w-[100px] border border-black px-2 py-1">
+                            AMOUNT
+                          </th>
+                        )}
                       </tr>
                     </thead>
 
@@ -192,7 +192,7 @@ const InvoiceModal = ({
                       {items.map((item) => (
                         <tr
                           key={item.id}
-                          className="h-[20px] border border-black text-[10px]"
+                          className="h-[30px] border border-black text-[10px]"
                         >
                           <td className="w-[250px] whitespace-normal break-words border-r border-black px-2 align-top">
                             {item.name || "N/A"}
@@ -203,36 +203,40 @@ const InvoiceModal = ({
                           <td className="w-[100px] border-r border-black px-2 align-top">
                             {(Number(item.cost) || 0).toFixed(2)}
                           </td>
-                          <td className="w-[100px] border-l border-black px-2 align-top">
-                            ₹{(Number(item.advance) || 0).toFixed(2)}
-                          </td>
+                          {!isHidden && (
+                            <td className="w-[100px] border-l border-black px-2 align-top">
+                              ₹{(Number(item.advance) || 0).toFixed(2)}
+                            </td>
+                          )}
                         </tr>
                       ))}
 
                       {/* Total Calculation */}
-                      {totalAdvance > 0 && (
-                        <tr className="border-l border-black text-[10px] font-bold">
-                          <td className="border-t border-black px-2 py-1 font-normal">
-                            Advance Payment:
-                          </td>
-                          <td className="border-t border-black px-2 py-1"></td>
-                          <td className="border-b border-t border-black px-2 py-1"></td>
-                          <td className="border-l border-t border-black px-2">
-                            ₹{totalAdvance.toFixed(2)}
-                          </td>
-                        </tr>
-                      )}
+                      {!isHidden && (
+                        <>
+                          <tr className="border-l border-black text-[10px] font-bold">
+                            <td className="border-t border-black px-2 py-1 font-normal">
+                              Advance Payment:
+                            </td>
+                            <td className="border-t border-black px-2 py-1"></td>
+                            <td className="border-b border-t border-black px-2 py-1"></td>
+                            <td className="border-l border-t border-black px-2">
+                              ₹{totalAdvance.toFixed(2)}
+                            </td>
+                          </tr>
 
-                      <tr className=" border-black text-[10px] font-bold">
-                        <td className="border-t border-black px-2 py-1 font-normal">
-                          Remaining Payment:
-                        </td>
-                        <td className="border-t border-black px-2 py-1"></td>
-                        <td className="border-r border-black px-2 py-1"></td>
-                        <td className="border-t border-black px-2">
-                          ₹{(invoiceInfo.remainingPayment || 0).toFixed(2)}
-                        </td>
-                      </tr>
+                          <tr className=" border-black text-[10px] font-bold">
+                            <td className="border-t border-black px-2 py-1 font-normal">
+                              Remaining Payment:
+                            </td>
+                            <td className="border-t border-black px-2 py-1"></td>
+                            <td className="border-r border-black px-2 py-1"></td>
+                            <td className="border-t border-black px-2">
+                              ₹{(invoiceInfo.remainingPayment || 0).toFixed(2)}
+                            </td>
+                          </tr>
+                        </>
+                      )}
                     </tbody>
                   </table>
 
@@ -267,6 +271,12 @@ const InvoiceModal = ({
                   className="w-full rounded-md border border-blue-500 py-2 text-sm text-blue-500 shadow-sm hover:bg-blue-500 hover:text-white"
                 >
                   Back
+                </button>
+                <button
+                  onClick={toggleHide}
+                  className="w-full rounded-md border border-gray-500 py-2 text-sm text-gray-500 shadow-sm hover:bg-gray-500 hover:text-white"
+                >
+                  {isHidden ? "Show" : "Hide"} Amount Column
                 </button>
               </div>
             </div>
