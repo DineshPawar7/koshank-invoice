@@ -192,7 +192,7 @@ const InvoiceModal = ({
                       {items.map((item) => (
                         <tr
                           key={item.id}
-                          className="h-[200px] border border-black text-[10px]"
+                          className="h-[20px] border border-black text-[10px]"
                         >
                           <td className="w-[250px] whitespace-normal break-words border-r border-black px-2 align-top">
                             {item.name || "N/A"}
