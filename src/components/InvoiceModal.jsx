@@ -153,7 +153,7 @@ const InvoiceModal = ({
                               Mr. Shankar Dhange
                             </span>
                             <span className="block text-[10px]">
-                            koshank.com@gmail.com
+                              koshank.com@gmail.com
                             </span>
                             <span className="block text-[10px]">
                               Deccan, Pune, Maharashtra 411004
@@ -210,16 +210,18 @@ const InvoiceModal = ({
                       ))}
 
                       {/* Total Calculation */}
-                      <tr className="border-l border-black text-[10px] font-bold">
-                        <td className="border-t border-black px-2 py-1 font-normal">
-                          Advance Payment:
-                        </td>
-                        <td className="border-t border-black px-2 py-1"></td>
-                        <td className="border-b border-t border-black px-2 py-1"></td>
-                        <td className="border-l border-t border-black px-2">
-                          ₹{totalAdvance.toFixed(2)}
-                        </td>
-                      </tr>
+                      {totalAdvance > 0 && (
+                        <tr className="border-l border-black text-[10px] font-bold">
+                          <td className="border-t border-black px-2 py-1 font-normal">
+                            Advance Payment:
+                          </td>
+                          <td className="border-t border-black px-2 py-1"></td>
+                          <td className="border-b border-t border-black px-2 py-1"></td>
+                          <td className="border-l border-t border-black px-2">
+                            ₹{totalAdvance.toFixed(2)}
+                          </td>
+                        </tr>
+                      )}
 
                       <tr className=" border-black text-[10px] font-bold">
                         <td className="border-t border-black px-2 py-1 font-normal">
